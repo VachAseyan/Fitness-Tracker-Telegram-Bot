@@ -6,7 +6,7 @@ from telegram.ext import (
     ConversationHandler,
     MessageHandler,
     filters,
-    Context
+    ContextTypes
 )
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -15,7 +15,6 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 logger = logging.getLogger(__name__)
 
 SELECT_SECTION, GET_SCHEDULE, GET_EXERCISE, GET_EXERCISE_DETAILS = range(4)
-
 body_parts_keyboard = [['Chest', 'Back'], ['Legs', 'Arms'], ['Abs', 'Cardio']]
 exercises_keyboard = {
     'Chest': ['Push-ups', 'Bench Press', 'Dumbbell Fly'],
@@ -46,7 +45,7 @@ exercise_details = {
     'Cycling': {'sets': 1, 'repetitions': '30 minutes', 'rest_interval': 'N/A'},
 }
 
-async def start(update: Update, context: Context) -> int:
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     reply_markup = ReplyKeyboardMarkup([["Get Schedule"], ["Get Exercise"]], one_time_keyboard=True)
     await update.message.reply_text(
         "Hi! Let's get started. Select an option:",
@@ -54,7 +53,7 @@ async def start(update: Update, context: Context) -> int:
     )
     return SELECT_SECTION
 
-async def select_section(update: Update, context: Context) -> int:
+async def select_section(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Stores the selected section and proceeds accordingly."""
     user_choice = update.message.text
     if user_choice == "Get Schedule":
@@ -68,7 +67,7 @@ async def select_section(update: Update, context: Context) -> int:
         )
         return GET_EXERCISE
 
-async def get_schedule(update: Update, context: Context) -> int:
+async def get_schedule(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_choice = update.message.text
     if user_choice == "1 Week":
         await update.message.reply_text("Here's your weekly schedule:")
@@ -99,7 +98,7 @@ async def get_schedule(update: Update, context: Context) -> int:
         await update.message.reply_text("Month 4: Rest month")
     return ConversationHandler.END
 
-async def get_exercise(update: Update, context: Context) -> int:
+async def get_exercise(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_choice = update.message.text
     if user_choice not in sum(body_parts_keyboard, []):
         await update.message.reply_text("Please select a valid body part.")
@@ -114,7 +113,7 @@ async def get_exercise(update: Update, context: Context) -> int:
 
     return GET_EXERCISE_DETAILS
 
-async def get_exercise_details(update: Update, context: Context) -> int:
+async def get_exercise_details(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     user_choice = update.message.text
     selected_body_part = context.user_data.get('selected_body_part')
     if not selected_body_part or user_choice not in exercises_keyboard[selected_body_part]:
@@ -135,11 +134,11 @@ async def get_exercise_details(update: Update, context: Context) -> int:
 
     return ConversationHandler.END
 
-async def cancel(update: Update, context: Context) -> int:
+async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await update.message.reply_text("Operation canceled.", reply_markup=ReplyKeyboardRemove())
     return ConversationHandler.END
 
-async def training_graph(update: Update, context: Context) -> None:
+async def training_graph(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     dates = ['2024-04-01', '2024-04-02', '2024-04-03', '2024-04-04', '2024-04-05']
     workouts_completed = [3, 5, 4, 6, 7]
 
@@ -160,7 +159,7 @@ async def training_graph(update: Update, context: Context) -> None:
 
 def main() -> None:
     """Run the bot."""
-    application = Application.builder().token("YOUR_BOT_TOKEN").build()
+    application = Application.builder().token("7077792684:AAE9TCmEiqQu4kVOBK6GT9V05tDLBH3ma70").build()
 
     conv_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
